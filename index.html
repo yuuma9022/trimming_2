@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8">
+        <title>トリミング</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="generator" content="Astro v1.9.2">
+        <!-- 5.2.3⇨5.3へバージョンアップしているので、公式サイトで書き換え完了 -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <link rel="stylesheet" href="./assets/index.css"/>
+    </head>
+    <body>
+        <!-- 5.2.3⇨5.3へバージョンアップしているので、公式サイトで書き換え完了 -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        <style>
+            astro-island,astro-slot {
+                display: contents
+            }
+        </style>
+        <script>
+            (self.Astro = self.Astro || {}).load = a=>{
+                (async()=>await (await a())())()
+            }
+            ,
+            window.dispatchEvent(new Event("astro:load"));
+            var l;
+            {
+                const c = {
+                    0: t=>t,
+                    1: t=>JSON.parse(t, o),
+                    2: t=>new RegExp(t),
+                    3: t=>new Date(t),
+                    4: t=>new Map(JSON.parse(t, o)),
+                    5: t=>new Set(JSON.parse(t, o)),
+                    6: t=>BigInt(t),
+                    7: t=>new URL(t),
+                    8: t=>new Uint8Array(JSON.parse(t)),
+                    9: t=>new Uint16Array(JSON.parse(t)),
+                    10: t=>new Uint32Array(JSON.parse(t))
+                }
+                  , o = (t,s)=>{
+                    if (t === "" || !Array.isArray(s))
+                        return s;
+                    const [e,n] = s;
+                    return e in c ? c[e](n) : void 0
+                }
+                ;
+                customElements.get("astro-island") || customElements.define("astro-island", (l = class extends HTMLElement {
+                    constructor() {
+                        super(...arguments);
+                        this.hydrate = ()=>{
+                            if (!this.hydrator || this.parentElement && this.parentElement.closest("astro-island[ssr]"))
+                                return;
+                            const s = this.querySelectorAll("astro-slot")
+                              , e = {}
+                              , n = this.querySelectorAll("template[data-astro-template]");
+                            for (const r of n) {
+                                const i = r.closest(this.tagName);
+                                !i || !i.isSameNode(this) || (e[r.getAttribute("data-astro-template") || "default"] = r.innerHTML,
+                                r.remove())
+                            }
+                            for (const r of s) {
+                                const i = r.closest(this.tagName);
+                                !i || !i.isSameNode(this) || (e[r.getAttribute("name") || "default"] = r.innerHTML)
+                            }
+                            const a = this.hasAttribute("props") ? JSON.parse(this.getAttribute("props"), o) : {};
+                            this.hydrator(this)(this.Component, a, e, {
+                                client: this.getAttribute("client")
+                            }),
+                            this.removeAttribute("ssr"),
+                            window.removeEventListener("astro:hydrate", this.hydrate),
+                            window.dispatchEvent(new CustomEvent("astro:hydrate"))
+                        }
+                    }
+                    connectedCallback() {
+                        !this.hasAttribute("await-children") || this.firstChild ? this.childrenConnectedCallback() : new MutationObserver((s,e)=>{
+                            e.disconnect(),
+                            this.childrenConnectedCallback()
+                        }
+                        ).observe(this, {
+                            childList: !0
+                        })
+                    }
+                    async childrenConnectedCallback() {
+                        window.addEventListener("astro:hydrate", this.hydrate);
+                        let s = this.getAttribute("before-hydration-url");
+                        s && await import(s),
+                        this.start()
+                    }
+                    start() {
+                        const s = JSON.parse(this.getAttribute("opts"))
+                          , e = this.getAttribute("client");
+                        if (Astro[e] === void 0) {
+                            window.addEventListener(`astro:${e}`, ()=>this.start(), {
+                                once: !0
+                            });
+                            return
+                        }
+                        Astro[e](async()=>{
+                            const n = this.getAttribute("renderer-url")
+                              , [a,{default: r}] = await Promise.all([import(this.getAttribute("component-url")), n ? import(n) : ()=>()=>{}
+                            ])
+                              , i = this.getAttribute("component-export") || "default";
+                            if (!i.includes("."))
+                                this.Component = a[i];
+                            else {
+                                this.Component = a;
+                                for (const d of i.split("."))
+                                    this.Component = this.Component[d]
+                            }
+                            return this.hydrator = r,
+                            this.hydrate
+                        }
+                        , s, this)
+                    }
+                    attributeChangedCallback() {
+                        this.hydrator && this.hydrate()
+                    }
+                }
+                ,
+                l.observedAttributes = ["props"],
+                l))
+            }
+        </script>
+        <!-- 自分で書いたjsの読み込み -->
+        <!-- 現状、ファイル間の一ポートアクセスができていないので、要原因調査対象 -->
+        <!-- <script type="text/javascript" src="./client.js"></script> -->
+        <script type="text/javascript" src="./Trimming.js" props="{}" ssr="" client="load" opts="{&quot;name&quot;:&quot;Trimming&quot;,&quot;value&quot;:true}" await-children=""></script>
+        <script type="text/javascript" src="./client.js"></script>
+        <!-- 以下はどうやら、高速化を促すjsオプション（UIフレームワーク）らしく、設定が必要みたい。 -->
+        <!-- <astro-island uid="Z1KCGBc" component-url="./Trimming.js" component-export="default" renderer-url="./client.js" props="{}" ssr="" client="load" opts="{&quot;name&quot;:&quot;Trimming&quot;,&quot;value&quot;:true}" await-children=""> -->
+            <!--[-->
+            <main id="main-container" class="m-3">
+                <h2>トリミング</h2>
+                <div class="">
+                    <div>①画像ファイルを選択してください</div>
+                    <div class="row align-items-center">
+                        <div class="col-auto pe-0">
+                            <label class="btn btn-primary">
+                                <input type="file" class="d-none" accept=".jpg,.jpeg,.gif,.png,image/jpg,image/jpeg,image/gif,image/png">画像を選択
+                            </label>
+                        </div>
+                        <!---->
+                    </div>
+                </div>
+                <!---->
+                <!---->
+            </main>
+            <button type="button" class="d-none" data-bs-toggle="modal" data-bs-target="#result-modal">modal</button>
+            <div class="modal fade" id="result-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">トリミング結果</h5>
+                        </div>
+                        <div class="modal-body">
+                            <canvas class="d-none" id="result-canvas" width="0" height="0"></canvas>
+                            <img class="mx-auto" id="result-image">
+                            <button type="button" class="btn btn-primary d-block mx-auto mt-2">ダウンロード</button>
+                        </div>
+                        <div class="modal-footer">
+                            <div class="w-100 row justify-content-between">
+                                <button type="button" class="btn btn-secondary col-auto d-block" data-bs-dismiss="modal">閉じる</button>
+                                <button type="button" class="btn btn-secondary col-auto d-block">最初からやり直す</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--]-->
+        </astro-island>
+    </body>
+</html>
